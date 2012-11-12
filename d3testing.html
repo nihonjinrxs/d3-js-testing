@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Testing D3.js</title>
+
+	<script src="http://d3js.org/d3.v2.js" type="text/javascript"></script>
+	<script src="./d3testing.js" type="text/javascript"></script>
+
+	<!-- Based on the D3 tutorial at http://alignedleft.com/tutorials/d3/ -->
+
+	<style>
+		div.bar {
+			    display: inline-block;
+			    width: 20px;
+			    height: 75px;   /* We'll override this later */
+			    background-color: teal;
+			    margin-right: 2px;
+		}
+		svg circle {
+			fill: green;
+			stroke: black;
+			stroke-width: 3;
+		}
+	</style>
+</head>
+
+<body>
+	<script type="text/javascript">
+		// Data to use for charting.
+		dataset = [ 25, 7, 5, 26, 11, 8, 25, 14, 23, 19,
+                	14, 11, 22, 29, 11, 13, 12, 17, 18, 10,
+                	24, 18, 25, 9, 3 ];
+		
+		// Crude bar graph
+		d3.select("body").selectAll("p").data(dataset)
+				.enter().append("div").attr("class","bar")
+				.style("height", function(d) {
+				    return d*10 + "px";
+				});
+		
+		var svg_width = 860; 
+		var svg_height = 200;
+		var bar_padding = 2;
+		// SVG element for a circle plot
+		var svg = d3.select("body")
+            .append("svg")
+            .attr("width", svg_width)
+            .attr("height", svg_height);
+        var circles = svg.selectAll("circle")
+		    .data(dataset)
+		    .enter()
+		    .append("circle");
+		circles.attr("cx", function(d, i) {
+	            return 10 + (i * 50) + 25;
+	        })
+	        .attr("cy", svg_height/2)
+	        .attr("r", function(d) {
+	            return d;
+	        })
+	        .text(function(d) {
+	       		return d; 
+	        });
+
+	    // New SVG element for a new plot
+	    svg = d3.select("body").append("svg")
+	    	.attr("width", svg_width)
+	    	.attr("height", svg_height);
+	    svg.selectAll("rect")
+		   .data(dataset)
+		   .enter()
+		   .append("rect")
+		   .attr("y", function(d) {
+			    return svg_height - (d * 4);
+			})
+		   .attr("height", function(d) {
+			    return d * 4;
+			})
+		   .attr("x", function(d, i) {
+		   		return i * (svg_width / dataset.length);
+		    })
+		   .attr("width", svg_width / dataset.length - bar_padding)
+		   .attr("fill", function(d) {
+			    return "rgb(0, 0, " + (d * 10) + ")";
+			});
+		// Add labels to each bar
+		svg.selectAll("text")
+		   .data(dataset)
+		   .enter()
+		   .append("text")
+		   .text(function(d) {
+		        return d;
+		   })
+		   .attr("text-anchor", "middle")
+		   .attr("x", function(d, i) {
+		        return i * (svg_width / dataset.length) 
+		        	+ (svg_width / dataset.length - bar_padding) / 2;
+		   })
+		   .attr("y", function(d) {
+		   		if (d > 5) { return svg_height - (d * 4) + 14; }
+		        else { return svg_height - (d * 4) - 5; };
+		   })
+		   .attr("font-family", "sans-serif")
+		   .attr("font-size", "11px")
+		   .attr("fill", function(d) {
+		   		if (d > 5) { return "white"; }
+		   		else { return "black"; };
+		   });
+	</script>
+</body>
+
+</html>
